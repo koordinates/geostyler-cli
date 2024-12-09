@@ -5,6 +5,7 @@ import QGISParser from 'geostyler-qgis-parser';
 import MapfileParser from 'geostyler-mapfile-parser';
 import MapboxParser from 'geostyler-mapbox-parser';
 import LyrxParser from 'geostyler-lyrx-parser';
+import { MapnikStyleParser } from '@koordinates/geostyler-mapnik-parser';
 
 import {
   existsSync,
@@ -49,6 +50,22 @@ const getParserFromFormat = (inputString: string): StyleParser | undefined => {
     case 'qgis':
     case 'qml':
       return new QGISParser();
+    case 'mapnik':
+      return new MapnikStyleParser({
+        output: {
+          includeMap: false,
+          wellKnownBasePath: 'icons',
+          style: {
+            name: 'style',
+          },
+          symbolizers: {
+            MarkersSymbolizer: {
+              'allow-overlap': 'true',
+            },
+          },
+        },
+      }) as StyleParser<any>;
+
     case 'geostyler':
       return undefined;
     default:
@@ -65,7 +82,7 @@ const getFormatFromFilename = (fileName: string): string | undefined => {
     return undefined;
   }
   fileEnding = fileEnding.toLowerCase();
-  if (['lyrx', 'mapbox', 'map', 'sld', 'qml', 'geostyler'].includes(fileEnding)) {
+  if (['lyrx', 'mapbox', 'map', 'sld', 'qml', 'mapnik', 'geostyler'].includes(fileEnding)) {
     return fileEnding;
   }
   return undefined;
@@ -88,7 +105,7 @@ const getExtensionFromFormat = (format: string): string => {
 };
 
 const tryRemoveExtension = (fileName: string): string => {
-  const possibleExtensions = ['js', 'ts', 'mapbox', 'map', 'sld', 'qml', 'lyrx'];
+  const possibleExtensions = ['js', 'ts', 'mapbox', 'map', 'sld', 'qml', 'lyrx', 'mapnik'];
   const splittedFileName = fileName.split('.');
   const sourceFileExtension = splittedFileName.pop();
   if (sourceFileExtension && possibleExtensions.includes(sourceFileExtension.toLowerCase())) {
@@ -154,6 +171,11 @@ function collectPaths(basePath: string, isFile: boolean): string[] {
 }
 
 function handleResult(result: ReadStyleResult | WriteStyleResult, parser: StyleParser, stage: 'Source' | 'Target') {
+    if (parser instanceof MapnikStyleParser) {
+      // MapnikStyleParser uses an older StyleParser interface, I haven't brought it up to date.
+      return result;
+    }
+
     const { output, errors, warnings, unsupportedProperties } = result;
     if (errors && errors.length > 0) {
       throw errors;
