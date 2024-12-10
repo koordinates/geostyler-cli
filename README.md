@@ -16,7 +16,7 @@ npx geostyler-cli --output new-qgis-style.qml my-existing.sld
 ## Standalone application
 
 Binaries are available for Linux, MacOS, and Windows on the 
-[Releases](https://github.com/geostyler/geostyler-cli/releases) page.
+[Releases](https://github.com/koordinates/geostyler-cli/releases) page.
 Download the zip file for your operating system, unzip, navigate to the folder
 and run the `geostyler` command:
 
