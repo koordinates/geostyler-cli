@@ -17,7 +17,7 @@
     "start": "node dist/geostyler.js",
     "lint": "eslint . && tsc --noEmit --project tsconfig.json",
     "test": "node test.js",
-    "build-binaries": "npm run build && pkg dist/geostyler.js --targets node18-linux-x64,node18-macos-x64,node18-win-x64 --out-path binaries",
+    "build-binaries": "npm run build && pkg dist/geostyler.js --targets node18-linux-x64,node18-linux-arm64,node18-macos-x64,node18-macos-arm64,node18-win-x64 --out-path binaries",
     "package-binaries": "npm run build-binaries && node package-binaries.js",
     "prepublishOnly": "npm run build",
     "postpublish": "npm run package-binaries"
